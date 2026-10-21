@@ -69,10 +69,10 @@ extern "C"
 #define TFORMAT_RUN_ID1     1
 #define TFORMAT_RUN_ID2     1
 #define TFORMAT_RUN_ID3     1
-#define TFORMAT_RUN_IDD_ID6 1  // EEPROM read and write
-#define TFORMAT_RUN_ID7     1
-#define TFORMAT_RUN_ID8     1
-#define TFORMAT_RUN_IDC     1
+#define TFORMAT_RUN_IDD_ID6 0  // EEPROM read and write (desligado: grava na EEPROM do encoder)
+#define TFORMAT_RUN_ID7     0  // desligado: reseta a posicao dentro da volta
+#define TFORMAT_RUN_ID8     0  // desligado: reseta a contagem de voltas
+#define TFORMAT_RUN_IDC     0  // desligado: reseta os alarmes
 
 //*****************************************************************************
 //
