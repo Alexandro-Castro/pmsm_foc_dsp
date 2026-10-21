@@ -1,0 +1,133 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "F2837xD" --package "F2837xD_337ZWT" --part "F2837xD_337ZWT" --context "CPU1" --product "C2000WARE@5.00.00.00"
+ * @versions {"tool":"1.17.0+3091"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const clb   = scripting.addModule("/driverlib/clb.js", {}, false);
+const clb1  = clb.addInstance();
+const TILE  = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/TILE");
+const TILE1 = TILE.addInstance();
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+clb1.clbBase    = "CLB4_BASE";
+clb1.attachTile = true;
+clb1.$name      = "PM_TFORMAT_CLB";
+clb1.enableCLB  = true;
+
+TILE.generateSimulation = true;
+TILE.reset_duration     = 5000;
+TILE.sim_duration       = 500000000;
+TILE.clock_period       = 10000;
+
+clb1.tile                       = TILE1;
+TILE1.$name                     = "TileTformat";
+TILE1.BOUNDARY.$name            = "BOUNDARY0";
+TILE1.BOUNDARY.in_edge0                = "rising edge";
+TILE1.BOUNDARY.in_edge1                = "falling edge";
+TILE1.BOUNDARY.in_edge3                = "both edges";
+TILE1.BOUNDARY.boundaryInput0          = "customWave";
+TILE1.BOUNDARY.input_pipeline0         = true;
+TILE1.BOUNDARY.boundaryInput1          = "customWave";
+TILE1.BOUNDARY.in_sync_2_cycle_delay_1 = true;
+TILE1.BOUNDARY.boundaryInput2          = "customWave";
+TILE1.BOUNDARY.in_sync_2_cycle_delay_2 = true;
+TILE1.BOUNDARY.boundaryInput3          = "customWave";
+TILE1.BOUNDARY.in_sync_2_cycle_delay_2 = true;
+TILE1.BOUNDARY.in_custom_source0       = "low(100)\nhigh(20)\nlow(1)";
+TILE1.BOUNDARY.in_custom_source1       = "#define one_bit 80\n#define two_bit 160\n#define three_bit 240\n#define four_bit 320\n#define five_bit 400\nhigh(2000)\n\nlow(one_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(two_bit)\nhigh(one_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nlow(four_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(two_bit)\nlow(two_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(one_bit)\nhigh(one_bit)\n\nhigh(one_bit)";
+TILE1.BOUNDARY.in_custom_source2       = "#define one_bit 80\n#define two_bit 160\n#define three_bit 240\n#define four_bit 320\n#define five_bit 400\nhigh(2000)\n\nlow(one_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(two_bit)\nhigh(one_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nlow(four_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(two_bit)\nlow(two_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(one_bit)\nhigh(one_bit)\n\nhigh(one_bit)";
+TILE1.BOUNDARY.in_custom_source3       = "#define one_bit 80\n#define two_bit 160\n#define three_bit 240\n#define four_bit 320\n#define five_bit 400\nhigh(2000)\n\nlow(one_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(two_bit)\nhigh(one_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nlow(four_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(two_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(three_bit)\n\nhigh(one_bit)\nlow(one_bit)\n\nhigh(two_bit)\nlow(two_bit)\n\nlow(one_bit)\nhigh(one_bit)\nlow(one_bit)\nhigh(one_bit)\n\nhigh(one_bit)";
+TILE1.LUT_0.lutDescription             = "- out CLB_SPI_CLK edge reset control.\n- i0 ENCODER_RESPONSE, any edge\n- i1, i2 FRAME_STATE\n- i3 SPI clock width reached\n";
+TILE1.LUT_1.lutDescription             = "- out TRANSMIT_OR_RECEIVE_STARTED\n- i0 START_OPERATION\n- i1 ENCODER_RESPONSE falling edge\n- i2, i3 FRAME_STATE\n\n";
+TILE1.LUT_2.lutDescription             = "- out Triggers an update of COUNTER1.match2 \n  (CLOCK_COUNT) by the HLC \n  occurs at the start of RECEIVE_DATA\n- i0, i1 FRAME_STATE\n- i2 ENCODER_RESPONSE falling edge";
+TILE1.FSM_0.fsmDescription             = "- out is the SPI CLOCK without masking \n  (always active during a frame)\n- e0 CLOCK_FALLING_EDGE mark\n- e1 CLOCK_RISING_EDGE mark";
+TILE1.FSM_1.fsmDescription             = "Primary state machine. \nDetects frame transitions from transmit, wait, to receive\n- e0 TRANSMIT_OR_RECEIVE_STARTED\n- e1 CLOCK_COUNT_COMPLETE\n- s0 TRANSMIT_DATA or RECEIVE_DATA\n- s1 WAIT_FOR_DATA or RECEIVE_DATA\n- out FRAME_ACTIVE";
+TILE1.FSM_2.fsmDescription             = "- out TxEN generation\n- e0 TRANSMIT_COMPLETE\n- e1 START_OPERATION";
+TILE1.COUNTER_0.counterDescription     = "CLB_SPI_CLOCK edge generation\n- reset CLOCK_ALIGNMENT\n- mode0 FRAME_ACTIVE\n- zero match CLOCK_FALLING_EDGE mark\n- match1 CLOCK_RISING_EDGE mark\n- match2 CLOCK_WIDGH_REACHED";
+TILE1.COUNTER_1.counterDescription     = "CLOCK counter.\nIncrements on the rising edge of the generated CLOCK\n- reset CLOCK_COUNT_COMPLETE\n- mode0 CLOCK_RISING EDGE\n- match1 TRANSMIT_COMPLETE\n- match2 CLOCK_COUNT_COMPLETE";
+TILE1.OUTLUT_2.outlutDescription       = "CLB_SPI_CLOCK\nRoute to GPIO and then SPI CLK input";
+TILE1.OUTLUT_4.outlutDescription       = "TxEN\nRoute to RS485 logic";
+TILE1.LUT_0.$name               = "LUT_0";
+TILE1.LUT_0.i0                  = "BOUNDARY.in1";
+TILE1.LUT_0.i1                  = "FSM_1.S0";
+TILE1.LUT_0.i2                  = "FSM_1.S1";
+TILE1.LUT_0.i3                  = "COUNTER_0.count_match2";
+TILE1.LUT_0.eqn                 = "( i0 & ((i2 & !i1) | (i2 & i1) ) ) | i3";
+TILE1.LUT_1.$name               = "LUT_1";
+TILE1.LUT_1.i0                  = "BOUNDARY.in0";
+TILE1.LUT_1.i1                  = "BOUNDARY.in1";
+TILE1.LUT_1.i2                  = "FSM_1.S0";
+TILE1.LUT_1.i3                  = "FSM_1.S1";
+TILE1.LUT_1.eqn                 = "i0 | (i1 & ((~i2) & i3))";
+TILE1.LUT_2.$name               = "LUT_2";
+TILE1.LUT_2.eqn                 = "i2 & (i1 & (~i0))";
+TILE1.LUT_2.i0                  = "FSM_1.S0";
+TILE1.LUT_2.i1                  = "FSM_1.S1";
+TILE1.LUT_2.i2                  = "BOUNDARY.in1";
+TILE1.FSM_0.$name               = "FSM_0";
+TILE1.FSM_0.e1                  = "COUNTER_0.count_zero";
+TILE1.FSM_0.e0                  = "COUNTER_0.count_match1";
+TILE1.FSM_0.eqn_s0              = "((~s0) & e0) | (s0& (~e1))";
+TILE1.FSM_0.eqn_s1              = "s1";
+TILE1.FSM_0.eqn_out             = "s0 & (~e1)";
+TILE1.FSM_1.$name               = "FSM_1";
+TILE1.FSM_1.eqn_s0              = "(((~s0)&(~s1)) & e0) | ((s0&(~s1)) & (~e1)) | (((~s0)&(s1)) & e0) | ((s0&s1) & (~e1)) ";
+TILE1.FSM_1.eqn_s1              = "(((s0)&(~s1)) & e1) | ((~s0) & s1) | ((s0 & s1) & (~e1))";
+TILE1.FSM_1.e0                  = "LUT_1.OUT";
+TILE1.FSM_1.e1                  = "COUNTER_1.count_match2";
+TILE1.FSM_1.eqn_out             = "s0 | s1";
+TILE1.FSM_2.$name               = "FSM_2";
+TILE1.FSM_2.e0                  = "COUNTER_1.count_match1";
+TILE1.FSM_2.e1                  = "BOUNDARY.in0";
+TILE1.FSM_2.eqn_s0              = "((~s0) & e1) | (s0 & (~e0))";
+TILE1.FSM_2.eqn_s1              = "s1";
+TILE1.FSM_2.eqn_out             = "s0";
+TILE1.COUNTER_0.$name           = "COUNTER_0";
+TILE1.COUNTER_0.reset           = "LUT_0.OUT";
+TILE1.COUNTER_0.mode1           = "1";
+TILE1.COUNTER_0.mode0           = "FSM_1.OUT";
+TILE1.COUNTER_0.match1_val      = "19";
+TILE1.COUNTER_0.match2_val      = "39";
+TILE1.COUNTER_1.$name           = "COUNTER_1";
+TILE1.COUNTER_1.mode1           = "1";
+TILE1.COUNTER_1.reset           = "COUNTER_1.count_match2";
+TILE1.COUNTER_1.mode0           = "COUNTER_0.count_match1";
+TILE1.COUNTER_1.event_load_val  = "10";
+TILE1.COUNTER_1.match1_val      = "11";
+TILE1.COUNTER_1.match2_val      = "11";
+TILE1.COUNTER_2.$name           = "COUNTER_2";
+TILE1.COUNTER_2.mode1           = "1";
+TILE1.COUNTER_2.match1_val      = "40";
+TILE1.OUTLUT_0.$name            = "OUTLUT_0";
+TILE1.OUTLUT_1.$name            = "OUTLUT_1";
+TILE1.OUTLUT_2.$name            = "OUTLUT_2";
+TILE1.OUTLUT_2.eqn              = "(~( (~i0) & (i1))) ";
+TILE1.OUTLUT_2.i0               = "FSM_0.OUT";
+TILE1.OUTLUT_2.i1               = "FSM_1.S0";
+TILE1.OUTLUT_2.i2               = "COUNTER_1.count_match2";
+TILE1.OUTLUT_3.$name            = "OUTLUT_3";
+TILE1.OUTLUT_3.eqn              = "i0";
+TILE1.OUTLUT_3.i0               = "BOUNDARY.in7";
+TILE1.OUTLUT_4.$name            = "OUTLUT_4";
+TILE1.OUTLUT_4.eqn              = "i0";
+TILE1.OUTLUT_4.i0               = "FSM_2.OUT";
+TILE1.OUTLUT_5.$name            = "OUTLUT_5";
+TILE1.OUTLUT_6.$name            = "OUTLUT_6";
+TILE1.OUTLUT_7.$name            = "OUTLUT_7";
+TILE1.HLC.$name                 = "HLC_0";
+TILE1.HLC.e0                    = "LUT_2.OUT";
+TILE1.HLC.R0_init               = "40";
+TILE1.HLC.program0.$name        = "HLCP_0";
+TILE1.HLC.program0.instruct0    = "MOV C1, R3";
+TILE1.HLC.program0.instruct1    = "ADD R0, R3";
+TILE1.HLC.program0.instruct2    = "MOV_T2 R3, C1";
+TILE1.HLC.program1.$name        = "HLCP_1";
+TILE1.HLC.program2.$name        = "HLCP_2";
+TILE1.HLC.program3.$name        = "HLCP_3";

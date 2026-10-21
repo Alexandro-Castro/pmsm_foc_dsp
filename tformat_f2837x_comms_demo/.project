@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>tformat_f2837x_comms_demo</name>
+	<comment></comment>
+	<projects>
+		<project>PM_tformat_f2837x_lib</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.ti.ccstudio.core.ccsNature</nature>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
+	</natures>
+	<variableList>
+		<variable>
+			<name>C2000WARE_DEVICE_SUPPORT_ROOT</name>
+			<value>$%7BCOM_TI_MOTOR_CONTROL_C2000WARE_SDK_SOFTWARE_PACKAGE_INSTALL_DIR%7D/c2000ware/device_support/f2837xd</value>
+		</variable>
+		<variable>
+			<name>C2000WARE_DLIB_ROOT</name>
+			<value>$%7BCOM_TI_MOTOR_CONTROL_C2000WARE_SDK_SOFTWARE_PACKAGE_INSTALL_DIR%7D/c2000ware/driverlib/f2837xd/driverlib</value>
+		</variable>
+		<variable>
+			<name>C2000WARE_ROOT</name>
+			<value>$%7BCOM_TI_MOTOR_CONTROL_C2000WARE_SDK_SOFTWARE_PACKAGE_INSTALL_DIR%7D/c2000ware</value>
+		</variable>
+		<variable>
+			<name>SOLUTION_LIB_ROOT</name>
+			<value>$%7BCOM_TI_MOTOR_CONTROL_C2000WARE_SDK_SOFTWARE_PACKAGE_INSTALL_DIR%7D/libraries/position_sensing/tformat</value>
+		</variable>
+		<variable>
+			<name>SOLUTION_ROOT</name>
+			<value>$%7BCOM_TI_MOTOR_CONTROL_C2000WARE_SDK_SOFTWARE_PACKAGE_INSTALL_DIR%7D/solutions/boostxl_posmgr</value>
+		</variable>
+	</variableList>
+</projectDescription>

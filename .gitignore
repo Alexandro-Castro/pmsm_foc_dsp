@@ -1,0 +1,24 @@
+# Saidas de build do CCS (uma pasta por build configuration)
+boostxl_posmgr_site2_RAM/
+boostxl_posmgr_site2_FLASH/
+tmdxiddk379d_h1_RAM/
+RELEASE/
+CPU1_RAM/
+CPU1_FLASH/
+Debug/
+Release/
+
+# Biblioteca T-Format: regenerada ao compilar o projeto PM_tformat_f2837x_lib
+PM_tformat_f2837x_lib/lib/*.lib
+
+# Artefatos de compilacao soltos
+*.out
+*.obj
+*.map
+*.d_raw
+*_linkInfo.xml
+
+# Arquivos gerados automaticamente pelo CCS / configuracao local da IDE
+.clangd
+.theia/
+.codex/

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVariant value="50:Theia-based"/>
+	<ccsVersion value="71.0.0"/>
+	<deviceFamily value="C2000"/>
+	<executableActions value=""/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=tformat_systemtest.projectspec.tformat_f2837x_comms_demo"/>
+	<sourceLookupPath value="${C2000WARE_DLIB_ROOT}"/>
+	<origin value="C:\ti\C2000Ware_MotorControl_SDK_5_04_00_00\solutions\boostxl_posmgr\f2837xd\ccs\tformat\tformat_systemtest.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>

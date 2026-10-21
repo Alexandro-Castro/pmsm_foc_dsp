@@ -1,0 +1,79 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "F2837xD" --package "F2837xD_337ZWT" --part "F2837xD_337ZWT" --context "CPU1" --product "C2000WARE@5.00.00.00"
+ * @versions {"tool":"1.17.0+3091"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const clb              = scripting.addModule("/driverlib/clb.js", {}, false);
+const clb1             = clb.addInstance();
+const clbxbar          = scripting.addModule("/driverlib/clbxbar.js", {}, false);
+const clbxbar1         = clbxbar.addInstance();
+const epwm             = scripting.addModule("/driverlib/epwm.js", {}, false);
+const epwm1            = epwm.addInstance();
+const gpio             = scripting.addModule("/driverlib/gpio.js", {}, false);
+const gpio1            = gpio.addInstance();
+const inputxbar        = scripting.addModule("/driverlib/inputxbar.js", {}, false);
+const inputxbar1       = inputxbar.addInstance();
+const inputxbar_input  = scripting.addModule("/driverlib/inputxbar_input.js");
+const inputxbar_input1 = inputxbar_input.addInstance();
+const outputxbar       = scripting.addModule("/driverlib/outputxbar.js", {}, false);
+const outputxbar1      = outputxbar.addInstance();
+const spi              = scripting.addModule("/driverlib/spi.js", {}, false);
+const spi1             = spi.addInstance();
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+clb1.clbBase                     = "CLB4_BASE";
+clb1.filterConfigCLB_IN0         = "CLB_FILTER_RISING_EDGE";
+clb1.inputTypeCLB_IN1            = "GLOBAL";
+clb1.globalConfigCLB_IN1         = "CLB_GLOBAL_IN_MUX_CLB_AUXSIG0";
+clb1.filterConfigCLB_IN1         = "CLB_FILTER_FALLING_EDGE";
+clb1.inputsUsed                  = ["CLB_IN0","CLB_IN1","CLB_IN7"];
+clb1.synchronizeCLB_IN1          = true;
+clb1.outputsToOverridePeripheral = ["CLB_OUT2","CLB_OUT3"];
+clb1.$name                       = "TFORMAT_CLB";
+
+clbxbar1.$name      = "myCLBXBAR0";
+clbxbar1.muxesUsed  = ["XBAR_MUX01"];
+clbxbar1.mux1Config = "XBAR_CLB_MUX01_INPUTXBAR1";
+
+epwm1.useCase                = "CUSTOM";
+epwm1.useInterfacePins       = ["EPWM#B"];
+epwm1.$name                  = "TFORMAT_CLB_SPI_CLK";
+epwm1.epwm.$assign           = "EPWM4";
+epwm1.epwm.epwm_bPin.$assign = "GPIO7";
+
+gpio1.direction         = "GPIO_DIR_MODE_OUT";
+gpio1.writeInitialValue = true;
+gpio1.$name             = "TFORMAT_GPIO_PWRCTRL";
+gpio1.gpioPin.$assign   = "GPIO32";
+
+inputxbar1.$name = "INPUTXBAR1_SPISIMO";
+
+inputxbar_input1.$name         = "myINPUTXBARINPUT0";
+inputxbar_input1.inputxbarGpio = "GPIO24";
+inputxbar_input1.inputxbarLock = true;
+
+outputxbar1.muxesUsed                        = ["XBAR_MUX13"];
+outputxbar1.mux13Config                      = "XBAR_OUT_MUX13_CLB4_OUT4";
+outputxbar1.$name                            = "OUTPUTXBAR_TXEN";
+outputxbar1.outputxbar.$assign               = "OUTPUTXBAR1";
+outputxbar1.outputxbar.outputxbarPin.$assign = "GPIO34";
+
+spi1.$name                   = "mySPI0";
+spi1.emulationMode           = "SPI_EMULATION_FREE_RUN";
+spi1.bitRate                 = 5000000;
+spi1.transferProtocol        = "SPI_PROT_POL1PHA0";
+spi1.dataWidth               = "9";
+spi1.enabledFIFOInterrupts   = ["SPI_INT_RXFF","SPI_INT_RXFF_OVERFLOW"];
+spi1.spi.$assign             = "SPIB";
+spi1.spi.spi_picoPin.$assign = "GPIO24";
+spi1.spi.spi_pociPin.$assign = "GPIO25";
+spi1.spi.spi_clkPin.$assign  = "GPIO26";
+spi1.spi.spi_ptePin.$assign  = "GPIO27";
+spi1.picoQual.padConfig      = "PULLUP";
