@@ -100,3 +100,10 @@ corresponde ao ângulo elétrico real.
   sem erros. Leitura `{"position":1457,"turns":1,"id":17}` → ângulo mecânico ≈ 4,00°.
 - Tempo de uma leitura ID0 medido no osciloscópio: comando 4,4 µs, encoder responde após ~3,2 µs,
   resposta 24 µs (total ~32 µs no barramento).
+- Etapa 1 (leitura a 20 kHz): ~1,8 milhão de leituras sem nenhum erro de timeout, ID ou CRC;
+  interrupção de controle com 3,4 µs (cerca de 7% do período de 50 µs); ângulo acompanha o eixo
+  e a velocidade troca de sinal com o sentido de giro.
+- `encoder.status` = 4 (campo SF diferente de zero) com a bateria (VB) desligada. Não afeta a
+  posição dentro da volta; o significado do bit ainda será confirmado com o comando ID3 (campo ALMC).
+- No Watch, cada campo é lido num instante diferente (a XDS100 é lenta). Com o eixo girando,
+  campos da mesma estrutura parecem não bater; para comparar valores, pause o programa.
