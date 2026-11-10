@@ -46,24 +46,57 @@ Pontos que causaram falhas na montagem:
 
 | Projeto | Conteúdo |
 |---|---|
-| `PM_tformat_f2837x_lib` | Biblioteca T-Format da TI (CLB + SPI), copiada do MotorControl SDK 5.04 |
-| `tformat_f2837x_comms_demo` | Exemplo de comunicação da TI (TIDM-1011), build configuration `boostxl_posmgr_site2_RAM` |
+| `PM_tformat_f2837x_lib` | Biblioteca T-Format da TI (CLB + SPI), copiada do MotorControl SDK 5.04 sem alterações |
+| `tformat_f2837x_comms_demo` | Firmware do acionamento. Começou como o exemplo de comunicação da TI (TIDM-1011) e está sendo transformado no FOC |
 
-Origem: `C:\ti\C2000Ware_MotorControl_SDK_5_04_00_00\solutions\boostxl_posmgr\f2837xd\ccs\tformat\tformat_systemtest.projectspec`.
+Origem do exemplo: `C:\ti\C2000Ware_MotorControl_SDK_5_04_00_00\solutions\boostxl_posmgr\f2837xd\ccs\tformat\tformat_systemtest.projectspec`.
 
-Alteração em relação ao exemplo da TI: em `include/tformat.h`, os comandos que gravam a
-EEPROM do encoder (IDD/ID6) e os resets (ID7, ID8, IDC) foram desligados. O exemplo envia
-somente leituras (ID0, ID1, ID2, ID3).
+### Estrutura do firmware (`tformat_f2837x_comms_demo`)
+
+| Arquivo | Função |
+|---|---|
+| `include/app_config.h` | Parâmetros ajustáveis: frequência de controle, encoder, motor |
+| `source/main.c` | Inicialização; depois disso tudo roda nas interrupções |
+| `source/control.c`, `include/control.h` | Interrupção de controle de 20 kHz (base de tempo do ePWM1) |
+| `source/encoder.c`, `include/encoder.h` | Leitura do encoder (comando ID0), ângulos, velocidade e diagnóstico |
+| `source/tformat_f2837x_boostxl_posmgr_site2.syscfg` | Pinos, XBARs e CLB do T-Format (SysConfig) |
+
+Recursos do chip ocupados pelo encoder: CLB tile 4 + ePWM4 (GPIO7), SPIB (GPIO63–66) e
+OUTPUTXBAR6 (GPIO9). O PWM do inversor deve usar ePWM1–ePWM3.
+
+## Etapa 1: leitura periódica do encoder a 20 kHz
+
+A cada 50 µs (frequência de chaveamento do inversor), a interrupção do ePWM1:
+
+1. processa a resposta do encoder pedida no período anterior (`encoder_update`);
+2. pede a próxima posição (`encoder_requestPosition`).
+
+A transação (comando + resposta, ~32 µs) é feita pelo CLB e pelo SPI sem a CPU esperar.
+O ângulo usado em cada período foi medido pelo encoder ~46 µs antes.
+
+| Medida no osciloscópio | Esperado |
+|---|---|
+| J8-78 (GPIO8) | Pulso a cada 50 µs; a largura é a duração da interrupção |
+| J8-77 (TxEN) | Pulso de ~4,4 µs logo depois da subida de J8-78 |
+| LED azul (LD10) | Pisca a cada 0,5 s |
+
+Variáveis para o Watch: `encoder` e `control`.
+
+Pendências em `app_config.h`: `MOTOR_POLE_PAIRS` (valor provisório 1) e
+`ENCODER_ELEC_OFFSET_COUNTS` (medido na etapa 4). Sem eles, `encoder.angleElec` ainda não
+corresponde ao ângulo elétrico real.
 
 ## Compilar e rodar (CCS 21)
 
-1. Abrir esta pasta como workspace no CCS. O exemplo procura a biblioteca em
+1. Abrir esta pasta como workspace no CCS. O projeto procura a biblioteca em
    `${CCS_WORKSPACE_DIR}/PM_tformat_f2837x_lib`.
 2. Build configuration de `tformat_f2837x_comms_demo`: `boostxl_posmgr_site2_RAM`.
 3. **Project → Build Project(s)**. A biblioteca é compilada junto.
-4. **F5** e depois **Continue**. No Watch: `encoderData`, `errorData`, `tformatSpiRxIsrTicker`.
+4. **F5** e depois **Continue**. No Watch: `encoder`, `control` (com **Continuous Refresh**).
 
-## Resultado validado
+## Resultados validados
 
-- `encoderData.position` de 0 a 131 071 por volta (17 bits), `turns` muda a cada volta completa, `errorData` em zero.
-- Exemplo de leitura: `{"position":1457,"turns":1,"id":17}` → ângulo mecânico = 1457 × 360° / 131 072 ≈ 4,00°.
+- Exemplo da TI: posição de 0 a 131 071 por volta (17 bits), `turns` muda a cada volta completa,
+  sem erros. Leitura `{"position":1457,"turns":1,"id":17}` → ângulo mecânico ≈ 4,00°.
+- Tempo de uma leitura ID0 medido no osciloscópio: comando 4,4 µs, encoder responde após ~3,2 µs,
+  resposta 24 µs (total ~32 µs no barramento).
