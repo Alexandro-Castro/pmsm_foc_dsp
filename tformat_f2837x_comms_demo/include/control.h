@@ -4,11 +4,9 @@
 //
 // TITLE:  Interrupcao de controle de 20 kHz
 //
-// O ePWM1 gera uma interrupcao a cada 50 us, no inicio de cada periodo de
-// chaveamento (contador em zero). Nesta etapa ela so le o encoder; nas
-// proximas, recebera a leitura do ADC, o FOC e a atualizacao do PWM.
-//
-// O ePWM1 ainda nao aciona nenhum pino: so a base de tempo e usada.
+// O ePWM1 (fase A do inversor) gera uma interrupcao a cada 50 us, no inicio
+// de cada periodo de chaveamento (contador em zero). Nela rodam a leitura do
+// encoder e o comando do PWM; nas proximas etapas, a leitura do ADC e o FOC.
 //
 //#############################################################################
 
@@ -32,10 +30,29 @@ typedef struct
 
 extern ControlStatus control;
 
-// Configura o ePWM1 (parado) e os pinos de diagnostico. Chamar uma vez.
+//-----------------------------------------------------------------------------
+// Teste do PWM na bancada (etapa 2). Os campos sao escritos pelo Watch do CCS.
+//
+//   pwmTest.enable = 1   libera o chaveamento (comeca em 50 %)
+//   pwmTest.duty[i]      razao ciclica de cada fase, de 0 a 1
+//   pwmTest.enable = 0   desliga todas as chaves
+//
+// Se o PWM for desligado pelo hardware (por exemplo, ao pausar no CCS),
+// pwmTest.enable volta para 0 sozinho: para religar, escreva 1 de novo.
+//-----------------------------------------------------------------------------
+typedef struct
+{
+    bool      enable;            // 1 = chavear, 0 = desligar
+    float32_t duty[3];           // razao ciclica das fases A, B, C
+} PwmTestCommand;
+
+extern PwmTestCommand pwmTest;
+
+// Configura a interrupcao do ePWM1 e os pinos de diagnostico. Chamar depois
+// de pwm_init(). Chamar uma vez.
 void control_init(void);
 
-// Liga o contador do ePWM1 e a interrupcao. Chamar depois de inicializar
+// Liga os contadores do PWM e a interrupcao. Chamar depois de inicializar
 // todos os modulos usados pela interrupcao (por exemplo, o encoder).
 void control_start(void);
 

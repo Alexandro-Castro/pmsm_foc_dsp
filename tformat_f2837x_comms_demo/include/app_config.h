@@ -23,17 +23,39 @@
 #define APP_EPWMCLK_HZ              (DEVICE_SYSCLK_FREQ / 2U)
 
 //-----------------------------------------------------------------------------
+// PWM do inversor (veja pwm.h para pinos e logica)
+//-----------------------------------------------------------------------------
+// Frequencia de chaveamento: 20 kHz -> um periodo de 50 us.
+#define PWM_FREQ_HZ                 20000U
+
+// Os contadores do ePWM1-3 contam para cima e para baixo (triangular, PWM
+// simetrico). Um periodo completo = 2 * TBPRD ciclos de TBCLK (10 ns).
+//   TBPRD = 100 MHz / (2 * 20 kHz) = 2500
+#define PWM_TBPRD                   (APP_EPWMCLK_HZ / (2U * PWM_FREQ_HZ))
+
+// Tempo morto entre desligar uma chave do braco e ligar a outra. 1 us, o
+// mesmo usado com o ESP32 nesta placa inversora.
+//   100 ciclos de 10 ns = 1 us
+#define PWM_DEADTIME_NS             1000U
+#define PWM_DEADTIME_COUNTS         ((PWM_DEADTIME_NS * (APP_EPWMCLK_HZ / 1000000U)) / 1000U)
+
+// Sinais de controle da placa inversora (conector JP1):
+//   Ativa (JP1-4): saida. 1 = modulo IRAM habilitado; 0 ou pino solto =
+//                  modulo desligado pelo pino T/ITRIP.
+//   Falha (JP1-2): entrada. 1 = protecao da placa atuou (ou placa sem
+//                  alimentacao); 0 = normal.
+#define INV_ENABLE_GPIO             24U                 // J4-34
+#define INV_ENABLE_GPIO_CFG         GPIO_24_GPIO24
+#define INV_FAULT_GPIO              16U                 // J4-33
+#define INV_FAULT_GPIO_CFG          GPIO_16_GPIO16
+
+//-----------------------------------------------------------------------------
 // Malha de controle
 //-----------------------------------------------------------------------------
-// A interrupcao de controle roda na mesma frequencia de chaveamento do
-// inversor: 20 kHz -> um periodo de 50 us.
-#define CONTROL_FREQ_HZ             20000U
+// A interrupcao de controle roda uma vez por periodo de PWM (20 kHz), no
+// inicio do periodo (contador do ePWM1 em zero).
+#define CONTROL_FREQ_HZ             PWM_FREQ_HZ
 #define CONTROL_PERIOD_S            (1.0f / (float32_t)CONTROL_FREQ_HZ)
-
-// O ePWM1 conta para cima e para baixo (triangular, como no PWM simetrico do
-// FOC). Um periodo completo = 2 * TBPRD ciclos de TBCLK.
-//   TBPRD = 100 MHz / (2 * 20 kHz) = 2500
-#define CONTROL_EPWM_TBPRD          (APP_EPWMCLK_HZ / (2U * CONTROL_FREQ_HZ))
 
 // Pisca o LED azul (LD10) a cada 0,5 s para mostrar que a interrupcao roda.
 #define CONTROL_HEARTBEAT_TICKS     (CONTROL_FREQ_HZ / 2U)
@@ -61,8 +83,8 @@
 #define ENCODER_SPEED_FILTER_TAU_S  0.001f
 
 // Quantas leituras seguidas com erro ativam encoder.fault. A falha fica
-// travada ate reiniciar o programa (nas proximas etapas ela vai desligar o
-// PWM do inversor).
+// travada ate reiniciar o programa (quando o FOC estiver rodando, ela vai
+// desligar o PWM do inversor).
 #define ENCODER_MAX_CONSECUTIVE_ERRORS  3U
 
 //-----------------------------------------------------------------------------

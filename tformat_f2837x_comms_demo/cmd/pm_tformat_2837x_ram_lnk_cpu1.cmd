@@ -8,10 +8,10 @@ PAGE 0 :
    RAMM0            : origin = 0x000123, length = 0x0002DD
    RAMD0            : origin = 0x00B000, length = 0x000800
    RAMLS0           : origin = 0x008000, length = 0x000800
-   RAMLS1           : origin = 0x008800, length = 0x000800
-   RAMLS2           : origin = 0x009000, length = 0x000800
-   RAMLS3           : origin = 0x009800, length = 0x000800
-   RAMLS4           : origin = 0x00A000, length = 0x000800
+   /* LS1 a LS4 sao continuos; juntos permitem que o codigo de um arquivo .c
+      passe de 0x800 palavras (na configuracao RAM todo o codigo vai para
+      .TI.ramfunc, e cada arquivo vira um bloco so). */
+   RAMLS1_4         : origin = 0x008800, length = 0x002000
    RESET            : origin = 0x3FFFC0, length = 0x000002
 
 PAGE 1 :
@@ -59,7 +59,7 @@ PAGE 1 :
 SECTIONS
 {
    codestart        : > BEGIN,     PAGE = 0
-   .text            : >> RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4,   PAGE = 0
+   .text            : >> RAMD0 |  RAMLS0 | RAMLS1_4,   PAGE = 0
    .cinit           : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
@@ -67,7 +67,7 @@ SECTIONS
 
 #if defined(__TI_EABI__)
    .bss             : > RAMLS5,    PAGE = 1
-   .bss:output      : > RAMLS3,    PAGE = 0
+   .bss:output      : > RAMLS1_4,  PAGE = 0
    .init_array      : > RAMM0,     PAGE = 0
    .const           : > RAMLS5,    PAGE = 1
    .data            : > RAMLS5,    PAGE = 1
@@ -81,9 +81,9 @@ SECTIONS
 
 #ifdef __TI_COMPILER_VERSION__
    #if __TI_COMPILER_VERSION__ >= 15009000
-    .TI.ramfunc : {} >> RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4,      PAGE = 0
+    .TI.ramfunc : {} >> RAMD0 |  RAMLS0 | RAMLS1_4,      PAGE = 0
    #else
-    ramfuncs    : >> RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4,      PAGE = 0
+    ramfuncs    : >> RAMD0 |  RAMLS0 | RAMLS1_4,      PAGE = 0
    #endif
 #endif
 
